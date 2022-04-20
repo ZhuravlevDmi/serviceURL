@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/util"
 	"io"
 	"net/http"
@@ -9,15 +10,18 @@ import (
 func MainHandler(w http.ResponseWriter, r *http.Request) {
 	// принимает запрос и перенаправляет на другой хендлер в зависимости от типа запроса
 	if r.Method == http.MethodPost {
-		HandlerPostURL(util.MapUrl)
+		h := http.HandlerFunc(HandlerPostURL(util.MapUrl))
+		h.ServeHTTP(w, r)
 		return
 
 	} else if r.Method == http.MethodGet {
-		HandlerGetURL(util.MapUrl)
+		h := http.HandlerFunc(HandlerGetURL(util.MapUrl))
+		h.ServeHTTP(w, r)
 		return
 
 	} else {
-		HandlerURL(w, r)
+		h := http.HandlerFunc(HandlerURL)
+		h.ServeHTTP(w, r)
 		return
 	}
 }
@@ -37,6 +41,7 @@ func HandlerGetURL(MapUrl map[string]string) http.HandlerFunc {
 			return
 		} else {
 			//w.WriteHeader(http.StatusTemporaryRedirect)
+			w.Header().Set("Location", config.ServerURL+"/"+path)
 			http.Redirect(w, r, redirectPath, http.StatusTemporaryRedirect)
 		}
 	}
@@ -58,12 +63,12 @@ func HandlerPostURL(MapUrl map[string]string) http.HandlerFunc {
 		resp, err := util.SetMapUrl(MapUrl, string(b))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(resp))
+			w.Write([]byte(config.ServerURL + "/" + resp))
 			return
 		}
 		// пишем тело ответа
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(resp))
+		w.Write([]byte(config.ServerURL + "/" + resp))
 	}
 }
 

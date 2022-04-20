@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -81,7 +82,7 @@ func TestHandlerPostURL(t *testing.T) {
 			body: "https://vk.com",
 			want: want{
 				statusCode:  201,
-				lenResponse: 6,
+				lenResponse: len(config.ServerURL) + 7,
 			},
 		},
 		{
@@ -89,7 +90,7 @@ func TestHandlerPostURL(t *testing.T) {
 			body: "https://yandex.ru",
 			want: want{
 				statusCode:  400,
-				lenResponse: 6,
+				lenResponse: len(config.ServerURL) + 7,
 			},
 		},
 	}
