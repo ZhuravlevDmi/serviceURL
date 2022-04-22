@@ -19,25 +19,3 @@ func GenerateMiniUrl() string {
 	str := b.String() // Например "4eaxo3"
 	return str
 }
-
-//func CheckMapUrl(mapURL map[string]string, path string) string {
-//	return mapURL[path]
-//}
-//
-//func SetMapUrl(mapURL map[string]string, path string) (string, error) {
-//	// добавляет урл в словарь mapURL
-//	for miniURL, URL := range mapURL {
-//		if URL == path {
-//			return miniURL, errors.New("данный URL уже записан")
-//		}
-//	}
-//	for {
-//		miniURL := GenerateMiniUrl()
-//		if mapURL[miniURL] != "" {
-//			continue
-//		}
-//		mapURL[miniURL] = path
-//		return miniURL, nil
-//	}
-//
-//}
