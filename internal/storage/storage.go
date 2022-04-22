@@ -6,10 +6,12 @@ import (
 )
 
 type StorageMapURL struct {
+	// Словарь для хванения URL
 	MapURL map[string]string
 }
 
 type Storage interface {
+	// Интерфейс для работы с хранилищем
 	Read(miniURL string) string
 	Record(bigURL string) (string, error)
 }

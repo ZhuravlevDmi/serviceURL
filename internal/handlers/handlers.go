@@ -7,27 +7,6 @@ import (
 	"net/http"
 )
 
-func MainHandler(MapUrl storage.Storage) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// принимает запрос и перенаправляет на другой хендлер в зависимости от типа запроса
-		if r.Method == http.MethodPost {
-			h := http.HandlerFunc(HandlerPostURL(MapUrl))
-			h.ServeHTTP(w, r)
-			return
-
-		} else if r.Method == http.MethodGet {
-			h := http.HandlerFunc(HandlerGetURL(MapUrl))
-			h.ServeHTTP(w, r)
-			return
-
-		} else {
-			h := http.HandlerFunc(HandlerURL)
-			h.ServeHTTP(w, r)
-			return
-		}
-	}
-}
-
 func HandlerGetURL(MapUrl storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		/*
@@ -82,3 +61,25 @@ func HandlerURL(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Обрабатываются только GET или POST запрос"))
 
 }
+
+//func MainHandler(MapUrl storage.Storage) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//
+//		// принимает запрос и перенаправляет на другой хендлер в зависимости от типа запроса
+//		if r.Method == http.MethodPost {
+//			h := http.HandlerFunc(HandlerPostURL(MapUrl))
+//			h.ServeHTTP(w, r)
+//			return
+//
+//		} else if r.Method == http.MethodGet {
+//			h := http.HandlerFunc(HandlerGetURL(MapUrl))
+//			h.ServeHTTP(w, r)
+//			return
+//
+//		} else {
+//			h := http.HandlerFunc(HandlerURL)
+//			h.ServeHTTP(w, r)
+//			return
+//		}
+//	}
+//}
