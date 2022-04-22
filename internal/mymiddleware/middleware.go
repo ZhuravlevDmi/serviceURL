@@ -1,4 +1,4 @@
-package myMiddleware
+package mymiddleware
 
 import (
 	"net/http"

@@ -60,6 +60,7 @@ func TestHandlerGetURL(t *testing.T) {
 			h.ServeHTTP(w, request)
 			result := w.Result()
 
+			defer result.Body.Close()
 			if result.StatusCode != tt.want.statusCode {
 				t.Errorf("Expected status code %d, got %d", tt.want.statusCode, w.Code)
 			}

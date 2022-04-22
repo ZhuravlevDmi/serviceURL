@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/ZhuravlevDmi/serviceURL/internal/handlers"
-	"github.com/ZhuravlevDmi/serviceURL/internal/myMiddleware"
+	"github.com/ZhuravlevDmi/serviceURL/internal/mymiddleware"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -22,7 +22,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	// middleware котороый пропускает только post или get запрос
-	r.Use(myMiddleware.MethodRequestMiddleware)
+	r.Use(mymiddleware.MethodRequestMiddleware)
 
 	r.Use(middleware.Timeout(60 * time.Second))
 
