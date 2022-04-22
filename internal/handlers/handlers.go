@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func HandlerGetURL(MapUrl storage.Storage) http.HandlerFunc {
+func HandlerGetURL(MapURL storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		/*
 			смотрим путь в request, если этот путь(path) есть в словаре MapURL в виде ключа,
@@ -15,8 +15,7 @@ func HandlerGetURL(MapUrl storage.Storage) http.HandlerFunc {
 		*/
 
 		path := r.URL.Path[1:]
-		//redirectPath := MapUrl.Read(path)
-		redirectPath := storage.ReadStorage(MapUrl, path)
+		redirectPath := storage.ReadStorage(MapURL, path)
 
 		if redirectPath == "" {
 			http.Error(w, "path is empty", http.StatusBadRequest)
@@ -29,7 +28,7 @@ func HandlerGetURL(MapUrl storage.Storage) http.HandlerFunc {
 	}
 }
 
-func HandlerPostURL(MapUrl storage.Storage) http.HandlerFunc {
+func HandlerPostURL(MapURL storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		/*
 			генерируем мини-урл из 6 символов и записываем новое значение в mapURL(ключ - мини-урл,
@@ -43,8 +42,7 @@ func HandlerPostURL(MapUrl storage.Storage) http.HandlerFunc {
 			return
 		}
 
-		//resp, err := MapUrl.Record(string(b))
-		resp, err := storage.RecordStorage(MapUrl, string(b))
+		resp, err := storage.RecordStorage(MapURL, string(b))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(config.ServerURL + "/" + resp))
@@ -56,30 +54,4 @@ func HandlerPostURL(MapUrl storage.Storage) http.HandlerFunc {
 	}
 }
 
-func HandlerURL(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusBadRequest)
-	w.Write([]byte("Обрабатываются только GET или POST запрос"))
 
-}
-
-//func MainHandler(MapUrl storage.Storage) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//
-//		// принимает запрос и перенаправляет на другой хендлер в зависимости от типа запроса
-//		if r.Method == http.MethodPost {
-//			h := http.HandlerFunc(HandlerPostURL(MapUrl))
-//			h.ServeHTTP(w, r)
-//			return
-//
-//		} else if r.Method == http.MethodGet {
-//			h := http.HandlerFunc(HandlerGetURL(MapUrl))
-//			h.ServeHTTP(w, r)
-//			return
-//
-//		} else {
-//			h := http.HandlerFunc(HandlerURL)
-//			h.ServeHTTP(w, r)
-//			return
-//		}
-//	}
-//}

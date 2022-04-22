@@ -35,7 +35,7 @@ func (s *StorageMapURL) Record(bigURL string) (string, error) {
 		}
 	}
 	for {
-		miniURL := util.GenerateMiniUrl()
+		miniURL := util.GenerateMiniURL()
 		if s.MapURL[miniURL] != "" {
 			continue
 		}

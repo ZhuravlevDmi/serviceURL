@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func GenerateMiniUrl() string {
+func GenerateMiniURL() string {
 	// Функция, которая генерирует сокращенный путь
 	rand.Seed(time.Now().UnixNano())
 	chars := []rune("abcdefghijklmnopqrstuvwxyz" +

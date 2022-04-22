@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	var MapURL storage.Storage = &storage.StorageMapURL{MapURL: map[string]string{}}
+	var MapURL storage.Storage = &storage.StorageMapURL{MapURL: make(map[string]string)}
 
 	r := chi.NewRouter()
 
