@@ -3,16 +3,17 @@ package handlers
 import (
 	"bytes"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
+	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-var testMapURL = map[string]string{
+var testMapURL storage.Storage = &storage.StorageMapURL{MapURL: map[string]string{
 	"fgt56f": "https://yandex.ru",
 	"4dgtd5": "https://google.com",
-}
+}}
 
 func TestHandlerGetURL(t *testing.T) {
 	type want struct {
