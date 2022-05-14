@@ -1,6 +1,18 @@
 package config
 
-var Port = ":8080"
-var host = "localhost"
-var transferProtocol = "http"
-var ServerURL = transferProtocol + "://" + host + Port
+import (
+	"github.com/caarlos0/env/v6"
+	"log"
+)
+
+type ConfigAdress struct {
+	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
+	BaseURL       string `env:"BASE_URL" envDefault:"http://localhost:8080"`
+}
+
+func (c *ConfigAdress) Parse() {
+	err := env.Parse(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/handlers"
 	"github.com/ZhuravlevDmi/serviceURL/internal/mymiddleware"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
@@ -11,6 +12,9 @@ import (
 )
 
 func main() {
+	var cfgAdr config.ConfigAdress
+	cfgAdr.Parse()
+
 	var MapURL storage.Storage = &storage.StorageMapURL{MapURL: make(map[string]string)}
 
 	r := chi.NewRouter()
@@ -27,10 +31,10 @@ func main() {
 	r.Use(middleware.Timeout(60 * time.Second))
 
 	r.Route("/", func(r chi.Router) {
-		r.Post("/api/shorten", handlers.HandlerAPIShorten(MapURL))
-		r.Get("/{path}", handlers.HandlerGetURL(MapURL))
-		r.Post("/", handlers.HandlerPostURL(MapURL))
+		r.Post("/api/shorten", handlers.HandlerAPIShorten(MapURL, cfgAdr.BaseURL))
+		r.Get("/{path}", handlers.HandlerGetURL(MapURL, cfgAdr.BaseURL))
+		r.Post("/", handlers.HandlerPostURL(MapURL, cfgAdr.BaseURL))
 	})
 
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(cfgAdr.ServerAddress, r)
 }

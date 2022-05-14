@@ -2,14 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
 	"io"
 	"log"
 	"net/http"
 )
 
-func HandlerGetURL(MapURL storage.Storage) http.HandlerFunc {
+func HandlerGetURL(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		/*
 			смотрим путь в request, если этот путь(path) есть в словаре MapURL в виде ключа,
@@ -24,13 +23,13 @@ func HandlerGetURL(MapURL storage.Storage) http.HandlerFunc {
 			return
 		} else {
 			//w.WriteHeader(http.StatusTemporaryRedirect)
-			w.Header().Set("Location", config.ServerURL+"/"+path)
+			w.Header().Set("Location", ServerURL+"/"+path)
 			http.Redirect(w, r, redirectPath, http.StatusTemporaryRedirect)
 		}
 	}
 }
 
-func HandlerPostURL(MapURL storage.Storage) http.HandlerFunc {
+func HandlerPostURL(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		/*
 			генерируем мини-урл из 6 символов и записываем новое значение в mapURL(ключ - мини-урл,
@@ -47,12 +46,12 @@ func HandlerPostURL(MapURL storage.Storage) http.HandlerFunc {
 		resp, err := storage.RecordStorage(MapURL, string(b))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(config.ServerURL + "/" + resp))
+			w.Write([]byte(ServerURL + "/" + resp))
 			return
 		}
 		// пишем тело ответа
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(config.ServerURL + "/" + resp))
+		w.Write([]byte(ServerURL + "/" + resp))
 	}
 }
 
@@ -66,7 +65,7 @@ type ErrorRequest struct {
 	Error string `json:"error"`
 }
 
-func HandlerAPIShorten(MapURL storage.Storage) http.HandlerFunc {
+func HandlerAPIShorten(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var v URL         // целевой объект
 		var res ResultURL // целевой объект
@@ -95,7 +94,7 @@ func HandlerAPIShorten(MapURL storage.Storage) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusCreated)
 
-		res.Result = config.ServerURL + "/" + resp
+		res.Result = ServerURL + "/" + resp
 		response, err := json.Marshal(res)
 		if err != nil {
 			log.Println(err)

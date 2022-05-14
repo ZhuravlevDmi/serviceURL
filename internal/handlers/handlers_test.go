@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
+	"github.com/ZhuravlevDmi/serviceURL/internal/util"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -16,7 +17,10 @@ var testMapURL storage.Storage = &storage.StorageMapURL{MapURL: map[string]strin
 	"4dgtd5": "https://google.com",
 }}
 
+var testCfgAddr config.ConfigAdress
+
 func TestHandlerGetURL(t *testing.T) {
+	util.ParseConfig(testCfgAddr)
 	type want struct {
 		statusCode int
 	}
@@ -56,7 +60,7 @@ func TestHandlerGetURL(t *testing.T) {
 			}
 			request := httptest.NewRequest(http.MethodGet, tt.path, nil)
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerGetURL(testMapURL))
+			h := http.HandlerFunc(HandlerGetURL(testMapURL, testCfgAddr.ServerAddress))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
@@ -71,6 +75,7 @@ func TestHandlerGetURL(t *testing.T) {
 }
 
 func TestHandlerPostURL(t *testing.T) {
+	util.ParseConfig(testCfgAddr)
 	type want struct {
 		statusCode  int
 		lenResponse int
@@ -85,7 +90,7 @@ func TestHandlerPostURL(t *testing.T) {
 			body: "https://vk.com",
 			want: want{
 				statusCode:  201,
-				lenResponse: len(config.ServerURL) + 7,
+				lenResponse: len(testCfgAddr.BaseURL) + 7,
 			},
 		},
 		{
@@ -93,7 +98,7 @@ func TestHandlerPostURL(t *testing.T) {
 			body: "https://yandex.ru",
 			want: want{
 				statusCode:  400,
-				lenResponse: len(config.ServerURL) + 7,
+				lenResponse: len(testCfgAddr.BaseURL) + 7,
 			},
 		},
 	}
@@ -102,7 +107,7 @@ func TestHandlerPostURL(t *testing.T) {
 
 			request := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(tt.body)))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerPostURL(testMapURL))
+			h := http.HandlerFunc(HandlerPostURL(testMapURL, testCfgAddr.ServerAddress))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
@@ -125,6 +130,7 @@ func TestHandlerPostURL(t *testing.T) {
 }
 
 func TestHandlerAPIShorten(t *testing.T) {
+	util.ParseConfig(testCfgAddr)
 	type URLRequest struct {
 		URL string `json:"url"`
 	}
@@ -166,7 +172,7 @@ func TestHandlerAPIShorten(t *testing.T) {
 
 			request := httptest.NewRequest(http.MethodPost, "/api/shorten", bytes.NewBuffer(res))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerAPIShorten(testMapURL))
+			h := http.HandlerFunc(HandlerAPIShorten(testMapURL, testCfgAddr.ServerAddress))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
