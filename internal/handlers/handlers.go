@@ -56,20 +56,20 @@ func HandlerPostURL(MapURL storage.Storage) http.HandlerFunc {
 	}
 }
 
-type Url struct {
-	Url string `json:"url,omitempty"`
+type URL struct {
+	URL string `json:"url,omitempty"`
 }
-type ResultUrl struct {
+type ResultURL struct {
 	Result string `json:"result"`
 }
 type ErrorRequest struct {
 	Error string `json:"error"`
 }
 
-func HandlerApiShorten(MapURL storage.Storage) http.HandlerFunc {
+func HandlerAPIShorten(MapURL storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var v Url         // целевой объект
-		var res ResultUrl // целевой объект
+		var v URL         // целевой объект
+		var res ResultURL // целевой объект
 		var e ErrorRequest
 		w.Header().Set("Content-Type", "application/json")
 
@@ -80,7 +80,7 @@ func HandlerApiShorten(MapURL storage.Storage) http.HandlerFunc {
 			return
 		}
 
-		if err := json.Unmarshal(req, &v); err != nil || v.Url == "" {
+		if err := json.Unmarshal(req, &v); err != nil || v.URL == "" {
 			e.Error = "Bad Request"
 			errResponse, _ := json.Marshal(e)
 			w.WriteHeader(http.StatusBadRequest)
@@ -88,7 +88,7 @@ func HandlerApiShorten(MapURL storage.Storage) http.HandlerFunc {
 			return
 		}
 
-		resp, err := storage.RecordStorage(MapURL, v.Url)
+		resp, err := storage.RecordStorage(MapURL, v.URL)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}

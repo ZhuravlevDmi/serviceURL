@@ -124,12 +124,9 @@ func TestHandlerPostURL(t *testing.T) {
 	}
 }
 
-func TestHandlerApiShorten(t *testing.T) {
-	type UrlRequest struct {
-		Url string `json:"url"`
-	}
-	type ErrorUrlRequest struct {
-		Urls string `json:"urls"`
+func TestHandlerAPIShorten(t *testing.T) {
+	type URLRequest struct {
+		URL string `json:"url"`
 	}
 
 	type want struct {
@@ -137,19 +134,19 @@ func TestHandlerApiShorten(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		body UrlRequest
+		body URLRequest
 		want want
 	}{
 		{
 			name: "test statusCode201",
-			body: UrlRequest{Url: "https://vk.ru"},
+			body: URLRequest{URL: "https://vk.ru"},
 			want: want{
 				statusCode: 201,
 			},
 		},
 		{
 			name: "test statusCode400",
-			body: UrlRequest{Url: "https://vk.com"},
+			body: URLRequest{URL: "https://vk.com"},
 			want: want{
 				statusCode: 400,
 			},
@@ -164,15 +161,16 @@ func TestHandlerApiShorten(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+
 			res, _ := json.Marshal(tt.body)
 
 			request := httptest.NewRequest(http.MethodPost, "/api/shorten", bytes.NewBuffer(res))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerApiShorten(testMapURL))
+			h := http.HandlerFunc(HandlerAPIShorten(testMapURL))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
-
+			defer result.Body.Close()
 			if result.StatusCode != tt.want.statusCode {
 				t.Errorf("Expected status code %d, got %d", tt.want.statusCode, w.Code)
 			}
