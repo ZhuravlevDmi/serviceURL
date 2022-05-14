@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"encoding/json"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -54,4 +56,50 @@ func HandlerPostURL(MapURL storage.Storage) http.HandlerFunc {
 	}
 }
 
+type Url struct {
+	Url string `json:"url,omitempty"`
+}
+type ResultUrl struct {
+	Result string `json:"result"`
+}
+type ErrorRequest struct {
+	Error string `json:"error"`
+}
 
+func HandlerApiShorten(MapURL storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var v Url         // целевой объект
+		var res ResultUrl // целевой объект
+		var e ErrorRequest
+		w.Header().Set("Content-Type", "application/json")
+
+		defer r.Body.Close()
+		req, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err := json.Unmarshal(req, &v); err != nil || v.Url == "" {
+			e.Error = "Bad Request"
+			errResponse, _ := json.Marshal(e)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write(errResponse)
+			return
+		}
+
+		resp, err := storage.RecordStorage(MapURL, v.Url)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
+		w.WriteHeader(http.StatusCreated)
+
+		res.Result = config.ServerURL + "/" + resp
+		response, err := json.Marshal(res)
+		if err != nil {
+			log.Println(err)
+		}
+		w.Write(response)
+	}
+}

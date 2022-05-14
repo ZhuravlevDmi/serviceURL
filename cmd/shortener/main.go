@@ -27,9 +27,9 @@ func main() {
 	r.Use(middleware.Timeout(60 * time.Second))
 
 	r.Route("/", func(r chi.Router) {
+		r.Post("/api/shorten", handlers.HandlerApiShorten(MapURL))
 		r.Get("/{path}", handlers.HandlerGetURL(MapURL))
 		r.Post("/", handlers.HandlerPostURL(MapURL))
-
 	})
 
 	http.ListenAndServe(":8080", r)

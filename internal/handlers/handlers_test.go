@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
 	"io"
@@ -118,6 +119,72 @@ func TestHandlerPostURL(t *testing.T) {
 			if len([]rune(string(resBody))) != tt.want.lenResponse {
 				t.Errorf("Expected body %d, got %d", tt.want.lenResponse, len([]rune(string(resBody))))
 			}
+
+		})
+	}
+}
+
+func TestHandlerApiShorten(t *testing.T) {
+	type UrlRequest struct {
+		Url string `json:"url"`
+	}
+	type ErrorUrlRequest struct {
+		Urls string `json:"urls"`
+	}
+
+	type want struct {
+		statusCode int
+	}
+	tests := []struct {
+		name string
+		body UrlRequest
+		want want
+	}{
+		{
+			name: "test statusCode201",
+			body: UrlRequest{Url: "https://vk.ru"},
+			want: want{
+				statusCode: 201,
+			},
+		},
+		{
+			name: "test statusCode400",
+			body: UrlRequest{Url: "https://vk.com"},
+			want: want{
+				statusCode: 400,
+			},
+		},
+		//{
+		//	name: "test statusCode400",
+		//	body: ErrorUrlRequest{Urls: "https://yandex.ru"},
+		//	want: want{
+		//		statusCode: 201,
+		//	},
+		//},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res, _ := json.Marshal(tt.body)
+
+			request := httptest.NewRequest(http.MethodPost, "/api/shorten", bytes.NewBuffer(res))
+			w := httptest.NewRecorder()
+			h := http.HandlerFunc(HandlerApiShorten(testMapURL))
+
+			h.ServeHTTP(w, request)
+			result := w.Result()
+
+			if result.StatusCode != tt.want.statusCode {
+				t.Errorf("Expected status code %d, got %d", tt.want.statusCode, w.Code)
+			}
+			// получаем и проверяем тело запроса
+			//defer result.Body.Close()
+			//resBody, err := io.ReadAll(result.Body)
+			//if err != nil {
+			//	t.Fatal(err)
+			//}
+			//if len([]rune(string(resBody))) != tt.want.lenResponse {
+			//	t.Errorf("Expected body %d, got %d", tt.want.lenResponse, len([]rune(string(resBody))))
+			//}
 
 		})
 	}
