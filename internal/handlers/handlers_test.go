@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
-	"github.com/ZhuravlevDmi/serviceURL/internal/util"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -20,7 +19,7 @@ var testMapURL storage.Storage = &storage.StorageMapURL{MapURL: map[string]strin
 var testCfgAddr config.ConfigAdress
 
 func TestHandlerGetURL(t *testing.T) {
-	util.ParseConfig(testCfgAddr)
+	testCfgAddr.Parse()
 	type want struct {
 		statusCode int
 	}
@@ -60,7 +59,7 @@ func TestHandlerGetURL(t *testing.T) {
 			}
 			request := httptest.NewRequest(http.MethodGet, tt.path, nil)
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerGetURL(testMapURL, testCfgAddr.ServerAddress))
+			h := http.HandlerFunc(HandlerGetURL(testMapURL, testCfgAddr.BaseURL))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
@@ -75,7 +74,7 @@ func TestHandlerGetURL(t *testing.T) {
 }
 
 func TestHandlerPostURL(t *testing.T) {
-	util.ParseConfig(testCfgAddr)
+	testCfgAddr.Parse()
 	type want struct {
 		statusCode  int
 		lenResponse int
@@ -107,7 +106,7 @@ func TestHandlerPostURL(t *testing.T) {
 
 			request := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(tt.body)))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerPostURL(testMapURL, testCfgAddr.ServerAddress))
+			h := http.HandlerFunc(HandlerPostURL(testMapURL, testCfgAddr.BaseURL))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
@@ -130,7 +129,7 @@ func TestHandlerPostURL(t *testing.T) {
 }
 
 func TestHandlerAPIShorten(t *testing.T) {
-	util.ParseConfig(testCfgAddr)
+	testCfgAddr.Parse()
 	type URLRequest struct {
 		URL string `json:"url"`
 	}
@@ -172,7 +171,7 @@ func TestHandlerAPIShorten(t *testing.T) {
 
 			request := httptest.NewRequest(http.MethodPost, "/api/shorten", bytes.NewBuffer(res))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerAPIShorten(testMapURL, testCfgAddr.ServerAddress))
+			h := http.HandlerFunc(HandlerAPIShorten(testMapURL, testCfgAddr.BaseURL))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
