@@ -6,24 +6,8 @@ import (
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
 	"log"
-	"math/rand"
 	"strings"
-	"time"
 )
-
-func GenerateMiniURL() string {
-	// Функция, которая генерирует сокращенный путь
-	rand.Seed(time.Now().UnixNano())
-	chars := []rune("abcdefghijklmnopqrstuvwxyz" +
-		"0123456789")
-	length := 6
-	var b strings.Builder
-	for i := 0; i < length; i++ {
-		b.WriteRune(chars[rand.Intn(len(chars))])
-	}
-	str := b.String() // Например "4eaxo3"
-	return str
-}
 
 func UpdateStorageMapURL(mapURL storage.Storage, info string) {
 	// функция принимает info(это информация с файла, там лежат json структуры URLStorageStruct)
@@ -45,12 +29,13 @@ func UpdateStorageMapURL(mapURL storage.Storage, info string) {
 }
 
 func CheckFile(cfgAdr config.ConfigAdress,
-	f storage.FileWorkInterface,
+	f storage.FileWorkStruct,
 	mapURL storage.Storage) {
 	if cfgAdr.PATHFile == "" {
 		return
 	}
 	path := cfgAdr.PATHFile
+
 	f.OpenFileRead(path)
 	defer f.Close()
 	dataFile := f.ReadFile()

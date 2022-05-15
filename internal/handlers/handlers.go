@@ -49,7 +49,7 @@ func HandlerPostURL(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
 			w.Write([]byte(ServerURL + "/" + resp))
 			return
 		}
-		// пишем тело ответа
+
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(ServerURL + "/" + resp))
 	}
@@ -65,7 +65,7 @@ type ErrorRequest struct {
 	Error string `json:"error"`
 }
 
-func HandlerAPIShorten(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
+func HandlerAPIShorten(MapURL storage.Storage, ServerURL string, f storage.FileWorkStruct, path string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var v URL         // целевой объект
 		var res ResultURL // целевой объект
@@ -91,6 +91,15 @@ func HandlerAPIShorten(MapURL storage.Storage, ServerURL string) http.HandlerFun
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}
+
+		f.OpenFileWrite(path)
+
+		defer f.Close()
+		s := storage.URLStorageStruct{
+			ID:  resp,
+			URL: v.URL,
+		}
+		f.WriteFile(s)
 
 		w.WriteHeader(http.StatusCreated)
 

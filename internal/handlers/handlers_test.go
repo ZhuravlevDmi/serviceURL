@@ -129,6 +129,7 @@ func TestHandlerPostURL(t *testing.T) {
 }
 
 func TestHandlerAPIShorten(t *testing.T) {
+	var f storage.FileWorkStruct
 	testCfgAddr.Parse()
 	type URLRequest struct {
 		URL string `json:"url"`
@@ -171,7 +172,7 @@ func TestHandlerAPIShorten(t *testing.T) {
 
 			request := httptest.NewRequest(http.MethodPost, "/api/shorten", bytes.NewBuffer(res))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerAPIShorten(testMapURL, testCfgAddr.BaseURL))
+			h := http.HandlerFunc(HandlerAPIShorten(testMapURL, testCfgAddr.BaseURL, f, testCfgAddr.PATHFile))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()

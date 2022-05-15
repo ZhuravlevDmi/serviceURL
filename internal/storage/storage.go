@@ -1,8 +1,13 @@
 package storage
 
 import (
+	"encoding/json"
 	"errors"
-	"github.com/ZhuravlevDmi/serviceURL/internal/util"
+	"log"
+	"math/rand"
+	"os"
+	"strings"
+	"time"
 )
 
 type StorageMapURL struct {
@@ -36,7 +41,7 @@ func (s *StorageMapURL) Record(bigURL string) (string, error) {
 		}
 	}
 	for {
-		miniURL := util.GenerateMiniURL()
+		miniURL := GenerateMiniURL()
 		if s.MapURL[miniURL] != "" {
 			continue
 		}
@@ -53,4 +58,78 @@ func (s *StorageMapURL) FullRecord(miniURL, bigURL string) error {
 	s.MapURL[miniURL] = bigURL
 	return nil
 
+}
+
+var _ FileWorkInterface = &FileWorkStruct{}
+
+type URLStorageStruct struct {
+	ID  string `json:"id"`
+	URL string `json:"url"`
+}
+
+type FileWorkStruct struct {
+	File *os.File
+	Path string
+}
+
+func (f *FileWorkStruct) Close() {
+	f.File.Close()
+}
+
+func (f *FileWorkStruct) OpenFileRead(path string) {
+	file, err := os.OpenFile(path, os.O_RDONLY|os.O_CREATE, 0777)
+	if err != nil {
+		log.Println(err)
+	}
+	f.File = file
+	f.Path = path
+}
+
+func (f *FileWorkStruct) OpenFileWrite(path string) {
+
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
+	if err != nil {
+		log.Println(err)
+	}
+	f.File = file
+	f.Path = path
+}
+
+func (f FileWorkStruct) ReadFile() string {
+	fileData, _ := os.ReadFile(f.File.Name())
+	return string(fileData)
+}
+
+func (f *FileWorkStruct) WriteFile(str URLStorageStruct) {
+	data, err := json.Marshal(str)
+	if err != nil {
+		log.Println(err)
+	}
+	_, e := f.File.Write([]byte(string(data) + "\n"))
+	if e != nil {
+		log.Println(e)
+	}
+
+}
+
+type FileWorkInterface interface {
+	OpenFileRead(path string)
+	OpenFileWrite(path string)
+	ReadFile() string
+	WriteFile(str URLStorageStruct)
+	Close()
+}
+
+func GenerateMiniURL() string {
+	// Функция, которая генерирует сокращенный путь
+	rand.Seed(time.Now().UnixNano())
+	chars := []rune("abcdefghijklmnopqrstuvwxyz" +
+		"0123456789")
+	length := 6
+	var b strings.Builder
+	for i := 0; i < length; i++ {
+		b.WriteRune(chars[rand.Intn(len(chars))])
+	}
+	str := b.String() // Например "4eaxo3"
+	return str
 }
