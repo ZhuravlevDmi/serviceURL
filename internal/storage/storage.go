@@ -14,6 +14,7 @@ type Storage interface {
 	// Интерфейс для работы с хранилищем
 	Read(miniURL string) string
 	Record(bigURL string) (string, error)
+	FullRecord(bigURL, miniURL string) error
 }
 
 func ReadStorage(s Storage, miniURL string) string {
@@ -42,4 +43,14 @@ func (s *StorageMapURL) Record(bigURL string) (string, error) {
 		s.MapURL[miniURL] = bigURL
 		return miniURL, nil
 	}
+}
+
+func (s *StorageMapURL) FullRecord(miniURL, bigURL string) error {
+
+	if s.MapURL[miniURL] != "" {
+		return errors.New("Запись уже существует")
+	}
+	s.MapURL[miniURL] = bigURL
+	return nil
+
 }

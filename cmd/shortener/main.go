@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/handlers"
 	"github.com/ZhuravlevDmi/serviceURL/internal/mymiddleware"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
+	"github.com/ZhuravlevDmi/serviceURL/internal/util"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"net/http"
@@ -15,7 +17,15 @@ func main() {
 	var cfgAdr config.ConfigAdress
 	cfgAdr.Parse()
 
-	var MapURL storage.Storage = &storage.StorageMapURL{MapURL: make(map[string]string)}
+	var f storage.FileWorkInterface
+
+	var MapURLStruct = storage.StorageMapURL{MapURL: make(map[string]string)}
+
+	var MapURL storage.Storage = &MapURLStruct
+
+	util.CheckFile(cfgAdr, f, MapURL)
+
+	fmt.Println(MapURLStruct.MapURL)
 
 	r := chi.NewRouter()
 
