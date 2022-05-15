@@ -1,3 +1,2 @@
 {"id":"qk7mja","url":"https://yandex.ru"}
 {"id":"ncvflg","url":"https://google.ru"}
-{"id":"73lzgu","url":"https://google.com"}

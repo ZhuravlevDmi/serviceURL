@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/handlers"
 	"github.com/ZhuravlevDmi/serviceURL/internal/mymiddleware"
@@ -23,6 +24,7 @@ func main() {
 	var MapURL storage.Storage = &MapURLStruct
 
 	util.CheckFile(cfgAdr, f, MapURL)
+	fmt.Println(MapURLStruct.MapURL)
 
 	r := chi.NewRouter()
 
