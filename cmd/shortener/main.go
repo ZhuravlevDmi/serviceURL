@@ -17,7 +17,7 @@ import (
 
 func main() {
 	var cfgAdr config.ConfigAdress
-	os.Setenv("FILE_STORAGE_PATH", "/Users/dmitrijzuravlev/Desktop/serviceURL/file.txt")
+	os.Setenv("FILE_STORAGE_PATH", "file.txt")
 
 	cfgAdr.Parse()
 
