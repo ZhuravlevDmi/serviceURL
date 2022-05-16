@@ -11,13 +11,12 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
 func main() {
 	var cfgAdr config.ConfigAdress
-	os.Setenv("FILE_STORAGE_PATH", "file.txt")
+	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
 
 	cfgAdr.Parse()
 
