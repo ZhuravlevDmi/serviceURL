@@ -29,7 +29,7 @@ func HandlerGetURL(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
 	}
 }
 
-func HandlerPostURL(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
+func HandlerPostURL(MapURL storage.Storage, ServerURL string, f storage.FileWorkStruct, path string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		/*
 			генерируем мини-урл из 6 символов и записываем новое значение в mapURL(ключ - мини-урл,
@@ -49,6 +49,17 @@ func HandlerPostURL(MapURL storage.Storage, ServerURL string) http.HandlerFunc {
 			w.Write([]byte(ServerURL + "/" + resp))
 			return
 		}
+
+		f.OpenFileWrite(path)
+
+		defer f.Close()
+		s := storage.URLStorageStruct{
+			ID:  resp,
+			URL: string(b),
+		}
+		f.WriteFile(s)
+
+		w.WriteHeader(http.StatusCreated)
 
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte(ServerURL + "/" + resp))

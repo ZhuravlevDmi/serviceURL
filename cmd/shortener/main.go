@@ -11,12 +11,13 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 func main() {
 	var cfgAdr config.ConfigAdress
-	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
+	os.Setenv("FILE_STORAGE_PATH", "file.txt")
 
 	cfgAdr.Parse()
 
@@ -45,7 +46,7 @@ func main() {
 	r.Route("/", func(r chi.Router) {
 		r.Post("/api/shorten", handlers.HandlerAPIShorten(MapURL, cfgAdr.BaseURL, f, cfgAdr.PATHFile))
 		r.Get("/{path}", handlers.HandlerGetURL(MapURL, cfgAdr.BaseURL))
-		r.Post("/", handlers.HandlerPostURL(MapURL, cfgAdr.BaseURL))
+		r.Post("/", handlers.HandlerPostURL(MapURL, cfgAdr.BaseURL, f, cfgAdr.PATHFile))
 	})
 
 	err := http.ListenAndServe(cfgAdr.ServerAddress, r)
