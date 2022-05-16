@@ -12,6 +12,12 @@ type ConfigAdress struct {
 	PATHFile      string `env:"FILE_STORAGE_PATH"`
 }
 
+type FlagStruct struct {
+	ServerAddress *string
+	BaseURL       *string
+	PATHFile      *string
+}
+
 //envDefault:"file.txt" envExpand:"true"
 func (c *ConfigAdress) Parse() {
 	err := env.Parse(c)

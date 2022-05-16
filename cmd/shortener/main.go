@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/handlers"
@@ -14,12 +15,21 @@ import (
 	"time"
 )
 
-func main() {
-	var cfgAdr config.ConfigAdress
+var f config.FlagStruct
+var cfgAdr config.ConfigAdress
+
+func init() {
 	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
-
 	cfgAdr.Parse()
+	f.ServerAddress = flag.String("a", cfgAdr.ServerAddress, "ServerAddress")
+	f.BaseURL = flag.String("b", cfgAdr.ServerAddress, "BaseURL")
+	f.PATHFile = flag.String("f", cfgAdr.PATHFile, "PATHFile")
+}
 
+func main() {
+
+	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
+	flag.Parse()
 	var f storage.FileWorkStruct
 
 	var MapURLStruct = storage.StorageMapURL{MapURL: make(map[string]string)}
