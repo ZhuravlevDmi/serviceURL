@@ -24,3 +24,10 @@ func (c *ConfigAdress) Parse() {
 	flag.StringVar(&c.PATHFile, "f", c.PATHFile, "PATHFile")
 	flag.Parse()
 }
+
+func (c *ConfigAdress) ParseTest() {
+	err := env.Parse(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+}

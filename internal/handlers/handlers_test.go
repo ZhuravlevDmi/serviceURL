@@ -19,7 +19,7 @@ var testMapURL storage.Storage = &storage.StorageMapURL{MapURL: map[string]strin
 var testCfgAddr config.ConfigAdress
 
 func TestHandlerGetURL(t *testing.T) {
-	testCfgAddr.Parse()
+	testCfgAddr.ParseTest()
 	type want struct {
 		statusCode int
 	}
@@ -75,7 +75,7 @@ func TestHandlerGetURL(t *testing.T) {
 
 func TestHandlerPostURL(t *testing.T) {
 	var f storage.FileWorkStruct
-	testCfgAddr.Parse()
+	testCfgAddr.ParseTest()
 	type want struct {
 		statusCode  int
 		lenResponse int
@@ -131,7 +131,7 @@ func TestHandlerPostURL(t *testing.T) {
 
 func TestHandlerAPIShorten(t *testing.T) {
 	var f storage.FileWorkStruct
-	testCfgAddr.Parse()
+	testCfgAddr.ParseTest()
 	type URLRequest struct {
 		URL string `json:"url"`
 	}
