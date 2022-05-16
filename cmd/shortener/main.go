@@ -22,7 +22,7 @@ func init() {
 	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
 	cfgAdr.Parse()
 	f.ServerAddress = flag.String("a", cfgAdr.ServerAddress, "ServerAddress")
-	f.BaseURL = flag.String("b", cfgAdr.ServerAddress, "BaseURL")
+	f.BaseURL = flag.String("b", cfgAdr.BaseURL, "BaseURL")
 	f.PATHFile = flag.String("f", cfgAdr.PATHFile, "PATHFile")
 }
 
@@ -32,9 +32,12 @@ func main() {
 	flag.Parse()
 	cfgAdr = config.ConfigAdress{
 		ServerAddress: *f.ServerAddress,
-		BaseURL:       *f.BaseURL,
+		BaseURL:       *f.BaseURL + *f.ServerAddress,
 		PATHFile:      *f.PATHFile,
 	}
+	fmt.Println(cfgAdr.ServerAddress)
+	fmt.Println(cfgAdr.BaseURL)
+	fmt.Println(cfgAdr.PATHFile)
 	var f storage.FileWorkStruct
 
 	fmt.Println()
