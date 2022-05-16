@@ -1,7 +1,6 @@
 package config
 
 import (
-	"flag"
 	"github.com/caarlos0/env/v6"
 	"log"
 )
@@ -19,8 +18,8 @@ func (c *ConfigAdress) Parse() {
 		log.Fatal(err)
 	}
 
-	flag.StringVar(&c.ServerAddress, "a", c.ServerAddress, "ServerAddress")
-	flag.StringVar(&c.BaseURL, "b", c.BaseURL, "BaseURL")
-	flag.StringVar(&c.PATHFile, "f", c.PATHFile, "PATHFile")
-	flag.Parse()
+	//flag.StringVar(&c.ServerAddress, "a", c.ServerAddress, "ServerAddress")
+	//flag.StringVar(&c.BaseURL, "b", c.BaseURL, "BaseURL")
+	//flag.StringVar(&c.PATHFile, "f", c.PATHFile, "PATHFile")
+	//flag.Parse()
 }
