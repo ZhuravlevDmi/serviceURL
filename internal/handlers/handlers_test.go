@@ -74,6 +74,7 @@ func TestHandlerGetURL(t *testing.T) {
 }
 
 func TestHandlerPostURL(t *testing.T) {
+	var f storage.FileWorkStruct
 	testCfgAddr.Parse()
 	type want struct {
 		statusCode  int
@@ -106,7 +107,7 @@ func TestHandlerPostURL(t *testing.T) {
 
 			request := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(tt.body)))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerPostURL(testMapURL, testCfgAddr.BaseURL))
+			h := http.HandlerFunc(HandlerPostURL(testMapURL, testCfgAddr.BaseURL, f, testCfgAddr.PATHFile))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
