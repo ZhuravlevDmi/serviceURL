@@ -30,7 +30,14 @@ func main() {
 
 	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
 	flag.Parse()
+	cfgAdr = config.ConfigAdress{
+		ServerAddress: *f.ServerAddress,
+		BaseURL:       *f.BaseURL,
+		PATHFile:      *f.PATHFile,
+	}
 	var f storage.FileWorkStruct
+
+	fmt.Println()
 
 	var MapURLStruct = storage.StorageMapURL{MapURL: make(map[string]string)}
 
