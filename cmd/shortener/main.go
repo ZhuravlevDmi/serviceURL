@@ -9,13 +9,18 @@ import (
 	"github.com/ZhuravlevDmi/serviceURL/internal/util"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 func main() {
 	var cfgAdr config.ConfigAdress
+	os.Setenv("FILE_STORAGE_PATH", "file.txt")
+
 	cfgAdr.Parse()
+	fmt.Println(cfgAdr.PATHFile)
 
 	var f storage.FileWorkStruct
 
@@ -24,7 +29,6 @@ func main() {
 	var MapURL storage.Storage = &MapURLStruct
 
 	util.CheckFile(cfgAdr, f, MapURL)
-	fmt.Println(MapURLStruct.MapURL)
 
 	r := chi.NewRouter()
 
@@ -45,5 +49,9 @@ func main() {
 		r.Post("/", handlers.HandlerPostURL(MapURL, cfgAdr.BaseURL))
 	})
 
-	http.ListenAndServe(cfgAdr.ServerAddress, r)
+	err := http.ListenAndServe(cfgAdr.ServerAddress, r)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(cfgAdr.ServerAddress)
 }

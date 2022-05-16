@@ -53,7 +53,7 @@ func (s *StorageMapURL) Record(bigURL string) (string, error) {
 func (s *StorageMapURL) FullRecord(miniURL, bigURL string) error {
 
 	if s.MapURL[miniURL] != "" {
-		return errors.New("Запись уже существует")
+		return errors.New("запись уже существует")
 	}
 	s.MapURL[miniURL] = bigURL
 	return nil

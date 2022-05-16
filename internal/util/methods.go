@@ -14,10 +14,16 @@ func UpdateStorageMapURL(mapURL storage.Storage, info string) {
 	// и это функция записывает эту инфу в mapURL
 	jsonListURL := strings.Split(string(info), "\n")
 	for _, d := range jsonListURL {
+
+		if d == "" {
+			continue
+		}
+
 		var j storage.URLStorageStruct
 		err := json.Unmarshal([]byte(d), &j)
 		if err != nil {
 			fmt.Println(err)
+			continue
 		}
 
 		e := mapURL.FullRecord(j.ID, j.URL)

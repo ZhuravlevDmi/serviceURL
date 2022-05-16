@@ -6,11 +6,13 @@ import (
 )
 
 type ConfigAdress struct {
+	User          string `env:"USER"`
 	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL       string `env:"BASE_URL" envDefault:"http://localhost:8080"`
-	PATHFile      string `env:"FILE_STORAGE_PATH" envDefault:"file.txt"`
+	PATHFile      string `env:"FILE_STORAGE_PATH"`
 }
 
+//envDefault:"file.txt" envExpand:"true"
 func (c *ConfigAdress) Parse() {
 	err := env.Parse(c)
 	if err != nil {
