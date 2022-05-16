@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/handlers"
@@ -12,43 +11,26 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
-var f config.FlagStruct
-var cfgAdr config.ConfigAdress
-
-func init() {
-	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
-	cfgAdr.Parse()
-	f.ServerAddress = flag.String("a", cfgAdr.ServerAddress, "ServerAddress")
-	f.BaseURL = flag.String("b", cfgAdr.BaseURL, "BaseURL")
-	f.PATHFile = flag.String("f", cfgAdr.PATHFile, "PATHFile")
-}
-
 func main() {
 
-	//os.Setenv("FILE_STORAGE_PATH", "file.txt")
-	flag.Parse()
-	cfgAdr = config.ConfigAdress{
-		ServerAddress: *f.ServerAddress,
-		BaseURL:       *f.BaseURL + *f.ServerAddress,
-		PATHFile:      *f.PATHFile,
-	}
-	fmt.Println(cfgAdr.ServerAddress)
-	fmt.Println(cfgAdr.BaseURL)
-	fmt.Println(cfgAdr.PATHFile)
-	var f storage.FileWorkStruct
+	var cfgAdr config.ConfigAdress
 
-	fmt.Println()
+	os.Setenv("FILE_STORAGE_PATH", "file.txt")
+
+	cfgAdr.Parse()
+
+	var f storage.FileWorkStruct
 
 	var MapURLStruct = storage.StorageMapURL{MapURL: make(map[string]string)}
 
 	var MapURL storage.Storage = &MapURLStruct
-	fmt.Println(MapURLStruct.MapURL)
+
 	util.CheckFile(cfgAdr, f, MapURL)
 
-	fmt.Println(MapURLStruct.MapURL)
 	r := chi.NewRouter()
 
 	// зададим встроенные Middleware, чтобы улучшить стабильность приложения
