@@ -17,19 +17,19 @@ import (
 
 func main() {
 	var cfgAdr config.ConfigAdress
-	os.Setenv("FILE_STORAGE_PATH", "file.txt")
+	os.Setenv("FILE_STORAGE_PATH", "/Users/dmitrijzuravlev/Desktop/serviceURL/file.txt")
 
 	cfgAdr.Parse()
-	fmt.Println(cfgAdr.PATHFile)
 
 	var f storage.FileWorkStruct
 
 	var MapURLStruct = storage.StorageMapURL{MapURL: make(map[string]string)}
 
 	var MapURL storage.Storage = &MapURLStruct
-
+	fmt.Println(MapURLStruct.MapURL)
 	util.CheckFile(cfgAdr, f, MapURL)
 
+	fmt.Println(MapURLStruct.MapURL)
 	r := chi.NewRouter()
 
 	// зададим встроенные Middleware, чтобы улучшить стабильность приложения
