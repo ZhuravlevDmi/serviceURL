@@ -33,7 +33,7 @@ func (w gzipWriter) Write(b []byte) (int, error) {
 
 func GzipHandle(h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		if !strings.Contains(r.Header.Get("Acept-Encoding"), "gzip") {
+		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
 			// если gzip не поддерживается, передаём управление
 			// дальше без изменений
 			h.ServeHTTP(w, r)
