@@ -2,6 +2,8 @@ package mymiddleware
 
 import (
 	"compress/gzip"
+	"github.com/ZhuravlevDmi/serviceURL/internal/config"
+	"github.com/ZhuravlevDmi/serviceURL/internal/util"
 	"io"
 	"net/http"
 	"strings"
@@ -33,7 +35,10 @@ func (w gzipWriter) Write(b []byte) (int, error) {
 
 func GzipHandle(h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+
+		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") &&
+			util.CheckValueList(config.ListContentType, r.Header.Get("Accept-Encoding")) {
+
 			// если gzip не поддерживается, передаём управление
 			// дальше без изменений
 			h.ServeHTTP(w, r)
@@ -47,7 +52,17 @@ func GzipHandle(h http.Handler) http.Handler {
 		}
 		defer gz.Close()
 
+		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
+			gz, err := gzip.NewReader(r.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			r.Body = gz
+		}
+
 		w.Header().Set("Content-Encoding", "gzip")
+
 		h.ServeHTTP(gzipWriter{ResponseWriter: w, Writer: gz}, r)
 	}
 	return http.HandlerFunc(fn)

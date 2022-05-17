@@ -53,3 +53,12 @@ func CheckFile(cfgAdr config.ConfigAdress,
 	UpdateStorageMapURL(mapURL, dataFile)
 
 }
+
+func CheckValueList(list []string, value string) bool {
+	for _, v := range list {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}

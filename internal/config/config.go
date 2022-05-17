@@ -6,6 +6,9 @@ import (
 	"log"
 )
 
+var ListContentType = []string{"application/javascript", "application/json",
+	"text/css", "text/html", "text/plain", "text/xml"}
+
 type ConfigAdress struct {
 	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
 	BaseURL       string `env:"BASE_URL" envDefault:"http://localhost:8080"`
