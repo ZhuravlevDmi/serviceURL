@@ -40,6 +40,7 @@ func main() {
 
 	// middleware котороый пропускает только post или get запрос
 	r.Use(mymiddleware.MethodRequestMiddleware)
+	r.Use(mymiddleware.GzipHandle)
 
 	r.Use(middleware.Timeout(60 * time.Second))
 
