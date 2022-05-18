@@ -96,7 +96,10 @@ func (f *FileWorkStruct) OpenFileWrite(path string) {
 }
 
 func (f FileWorkStruct) ReadFile() string {
-	fileData, _ := os.ReadFile(f.File.Name())
+	fileData, err := os.ReadFile(f.File.Name())
+	if err != nil {
+		log.Println(err)
+	}
 	return string(fileData)
 }
 
@@ -105,9 +108,9 @@ func (f *FileWorkStruct) WriteFile(str URLStorageStruct) {
 	if err != nil {
 		log.Println(err)
 	}
-	_, e := f.File.Write([]byte(string(data) + "\n"))
-	if e != nil {
-		log.Println(e)
+	_, err = f.File.Write([]byte(string(data) + "\n"))
+	if err != nil {
+		log.Println(err)
 	}
 
 }
