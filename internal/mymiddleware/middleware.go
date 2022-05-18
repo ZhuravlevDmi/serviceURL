@@ -5,6 +5,7 @@ import (
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/util"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -14,7 +15,10 @@ func MethodRequestMiddleware(h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		if method := r.Method; method != http.MethodGet && method != http.MethodPost {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Обрабатываются только GET или POST запрос"))
+			_, err := w.Write([]byte("Обрабатываются только GET или POST запрос"))
+			if err != nil {
+				log.Println(err)
+			}
 			return
 		}
 		h.ServeHTTP(w, r)
@@ -47,7 +51,10 @@ func GzipHandle(h http.Handler) http.Handler {
 		// создаем gzip.Writer поверх текущего w
 		gz, err := gzip.NewWriterLevel(w, gzip.BestSpeed)
 		if err != nil {
-			io.WriteString(w, err.Error())
+			_, err := io.WriteString(w, err.Error())
+			if err != nil {
+				log.Println(err)
+			}
 			return
 		}
 		defer gz.Close()

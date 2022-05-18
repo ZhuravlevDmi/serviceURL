@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/handlers"
 	"github.com/ZhuravlevDmi/serviceURL/internal/mymiddleware"
@@ -54,5 +53,4 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(cfgAdr.ServerAddress)
 }

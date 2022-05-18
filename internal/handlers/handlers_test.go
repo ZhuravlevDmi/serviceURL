@@ -158,13 +158,6 @@ func TestHandlerAPIShorten(t *testing.T) {
 				statusCode: 400,
 			},
 		},
-		//{
-		//	name: "test statusCode400",
-		//	body: ErrorUrlRequest{Urls: "https://yandex.ru"},
-		//	want: want{
-		//		statusCode: 201,
-		//	},
-		//},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -181,16 +174,6 @@ func TestHandlerAPIShorten(t *testing.T) {
 			if result.StatusCode != tt.want.statusCode {
 				t.Errorf("Expected status code %d, got %d", tt.want.statusCode, w.Code)
 			}
-			// получаем и проверяем тело запроса
-			//defer result.Body.Close()
-			//resBody, err := io.ReadAll(result.Body)
-			//if err != nil {
-			//	t.Fatal(err)
-			//}
-			//if len([]rune(string(resBody))) != tt.want.lenResponse {
-			//	t.Errorf("Expected body %d, got %d", tt.want.lenResponse, len([]rune(string(resBody))))
-			//}
-
 		})
 	}
 }

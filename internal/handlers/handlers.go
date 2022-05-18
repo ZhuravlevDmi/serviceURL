@@ -46,7 +46,10 @@ func HandlerPostURL(MapURL storage.Storage, ServerURL string, f storage.FileWork
 		resp, err := storage.RecordStorage(MapURL, string(b))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(ServerURL + "/" + resp))
+			_, err := w.Write([]byte(ServerURL + "/" + resp))
+			if err != nil {
+				log.Println(err)
+			}
 			return
 		}
 
@@ -62,7 +65,10 @@ func HandlerPostURL(MapURL storage.Storage, ServerURL string, f storage.FileWork
 		w.WriteHeader(http.StatusCreated)
 
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(ServerURL + "/" + resp))
+		_, e := w.Write([]byte(ServerURL + "/" + resp))
+		if e != nil {
+			log.Println(e)
+		}
 	}
 }
 
@@ -94,7 +100,10 @@ func HandlerAPIShorten(MapURL storage.Storage, ServerURL string, f storage.FileW
 			e.Error = "Bad Request"
 			errResponse, _ := json.Marshal(e)
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write(errResponse)
+			_, err := w.Write(errResponse)
+			if err != nil {
+				log.Println(err)
+			}
 			return
 		}
 
@@ -119,6 +128,9 @@ func HandlerAPIShorten(MapURL storage.Storage, ServerURL string, f storage.FileW
 		if err != nil {
 			log.Println(err)
 		}
-		w.Write(response)
+		_, er := w.Write(response)
+		if er != nil {
+			log.Println(er)
+		}
 	}
 }
