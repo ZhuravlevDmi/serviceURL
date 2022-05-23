@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/ZhuravlevDmi/serviceURL/internal/config"
 	"github.com/ZhuravlevDmi/serviceURL/internal/storage"
 	"io"
@@ -15,7 +16,10 @@ var testMapURL storage.Storage = &storage.StorageMapURL{MapURL: map[string]strin
 	"4dgtd5": "https://google.com",
 }}
 
+var testCfgAddr config.ConfigAdress
+
 func TestHandlerGetURL(t *testing.T) {
+	testCfgAddr.ParseTest()
 	type want struct {
 		statusCode int
 	}
@@ -55,7 +59,7 @@ func TestHandlerGetURL(t *testing.T) {
 			}
 			request := httptest.NewRequest(http.MethodGet, tt.path, nil)
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerGetURL(testMapURL))
+			h := http.HandlerFunc(HandlerGetURL(testMapURL, testCfgAddr.BaseURL))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
@@ -70,6 +74,8 @@ func TestHandlerGetURL(t *testing.T) {
 }
 
 func TestHandlerPostURL(t *testing.T) {
+	var f storage.FileWorkStruct
+	testCfgAddr.ParseTest()
 	type want struct {
 		statusCode  int
 		lenResponse int
@@ -84,7 +90,7 @@ func TestHandlerPostURL(t *testing.T) {
 			body: "https://vk.com",
 			want: want{
 				statusCode:  201,
-				lenResponse: len(config.ServerURL) + 7,
+				lenResponse: len(testCfgAddr.BaseURL) + 7,
 			},
 		},
 		{
@@ -92,7 +98,7 @@ func TestHandlerPostURL(t *testing.T) {
 			body: "https://yandex.ru",
 			want: want{
 				statusCode:  400,
-				lenResponse: len(config.ServerURL) + 7,
+				lenResponse: len(testCfgAddr.BaseURL) + 7,
 			},
 		},
 	}
@@ -101,7 +107,7 @@ func TestHandlerPostURL(t *testing.T) {
 
 			request := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(tt.body)))
 			w := httptest.NewRecorder()
-			h := http.HandlerFunc(HandlerPostURL(testMapURL))
+			h := http.HandlerFunc(HandlerPostURL(testMapURL, testCfgAddr.BaseURL, f, testCfgAddr.PATHFile))
 
 			h.ServeHTTP(w, request)
 			result := w.Result()
@@ -119,6 +125,55 @@ func TestHandlerPostURL(t *testing.T) {
 				t.Errorf("Expected body %d, got %d", tt.want.lenResponse, len([]rune(string(resBody))))
 			}
 
+		})
+	}
+}
+
+func TestHandlerAPIShorten(t *testing.T) {
+	var f storage.FileWorkStruct
+	testCfgAddr.ParseTest()
+	type URLRequest struct {
+		URL string `json:"url"`
+	}
+
+	type want struct {
+		statusCode int
+	}
+	tests := []struct {
+		name string
+		body URLRequest
+		want want
+	}{
+		{
+			name: "test statusCode201",
+			body: URLRequest{URL: "https://vk.ru"},
+			want: want{
+				statusCode: 201,
+			},
+		},
+		{
+			name: "test statusCode400",
+			body: URLRequest{URL: "https://vk.com"},
+			want: want{
+				statusCode: 400,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			res, _ := json.Marshal(tt.body)
+
+			request := httptest.NewRequest(http.MethodPost, "/api/shorten", bytes.NewBuffer(res))
+			w := httptest.NewRecorder()
+			h := http.HandlerFunc(HandlerAPIShorten(testMapURL, testCfgAddr.BaseURL, f, testCfgAddr.PATHFile))
+
+			h.ServeHTTP(w, request)
+			result := w.Result()
+			defer result.Body.Close()
+			if result.StatusCode != tt.want.statusCode {
+				t.Errorf("Expected status code %d, got %d", tt.want.statusCode, w.Code)
+			}
 		})
 	}
 }
